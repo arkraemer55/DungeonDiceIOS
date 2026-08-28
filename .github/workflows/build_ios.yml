@@ -34,15 +34,20 @@ jobs:
         run: |
           toolchain build python3 kivy
 
+      - name: Stage App Source Files
+        run: |
+          # Isolates pure app assets into a clean directory so rsync doesn't index toolchain build artifacts
+          mkdir app_src
+          cp main.py diceroller.kv select_click.wav emoji_font.ttf app_src/ || true
+
       - name: Create Xcode Project
         run: |
-          toolchain create DungeonDice .
+          toolchain create DungeonDice app_src
 
       - name: Build iOS Xcode Project & Create IPA
         run: |
           cd dungeondice-ios
 
-          # Compile for physical arm64 iOS devices
           xcodebuild -project DungeonDice.xcodeproj \
                      -scheme dungeondice \
                      -configuration Release \
@@ -53,7 +58,6 @@ jobs:
                      CODE_SIGNING_ALLOWED=NO \
                      build
                      
-          # Package into standard .ipa payload structure for AltStore
           mkdir -p Payload
           cp -r build/Release-iphoneos/dungeondice.app Payload/
           zip -r DungeonDice.ipa Payload
