@@ -19,8 +19,11 @@ jobs:
           python-version: "3.11"
 
       - name: Install Homebrew Dependencies
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: 1
+          HOMEBREW_NO_INSTALL_CLEANUP: 1
         run: |
-          brew install autoconf automake libtool pkg-config cmake pbzip2
+          brew install autoconf automake libtool pkg-config cmake pbzip2 || true
 
       - name: Install Python Build Dependencies
         run: |
@@ -29,7 +32,7 @@ jobs:
 
       - name: Build Python & Kivy Recipes
         run: |
-          toolchain build python3 kivy --arch=arm64
+          toolchain build python3 kivy
 
       - name: Create Xcode Project
         run: |
