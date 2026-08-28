@@ -36,7 +36,6 @@ jobs:
 
       - name: Stage App Source Files
         run: |
-          # Isolates pure app assets into a clean directory so rsync doesn't index toolchain build artifacts
           mkdir app_src
           cp main.py diceroller.kv select_click.wav emoji_font.ttf app_src/ || true
 
@@ -48,6 +47,7 @@ jobs:
         run: |
           cd dungeondice-ios
 
+          # Build xcode project using SYMROOT to force build outputs to the local build directory
           xcodebuild -project DungeonDice.xcodeproj \
                      -scheme dungeondice \
                      -configuration Release \
@@ -56,6 +56,7 @@ jobs:
                      CODE_SIGN_IDENTITY="" \
                      CODE_SIGNING_REQUIRED=NO \
                      CODE_SIGNING_ALLOWED=NO \
+                     SYMROOT=$PWD/build \
                      build
                      
           mkdir -p Payload
