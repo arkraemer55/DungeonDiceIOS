@@ -1,0 +1,153 @@
+<RoundedButton@Button>:
+    background_color: (0, 0, 0, 0)
+    background_normal: ''
+    color: (1, 1, 1, 1)
+    btn_color: (0.1, 0.55, 0.95, 1)
+
+    canvas.before:
+        Color:
+            rgba: self.btn_color if self.state == 'normal' else (self.btn_color[0]*0.7, self.btn_color[1]*0.7, self.btn_color[2]*0.7, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [(8, 8)]
+
+
+<DiceRow@BoxLayout>:
+    orientation: 'horizontal'
+    sides: 20
+    count: 0
+    spacing: 8
+    size_hint_y: None
+    height: '38dp'
+
+    Label:
+        text: "d" + str(root.sides)
+        size_hint_x: 0.25
+        font_size: '16sp'
+        bold: True
+
+    RoundedButton:
+        text: "-"
+        size_hint_x: 0.2
+        font_size: '18sp'
+        btn_color: (0.2, 0.2, 0.25, 1)
+        on_press: app.root.change_count(root.sides, -1)
+
+    Label:
+        text: str(root.count)
+        size_hint_x: 0.35
+        font_size: '16sp'
+        bold: True
+
+    RoundedButton:
+        text: "+"
+        size_hint_x: 0.2
+        font_size: '18sp'
+        btn_color: (0.1, 0.55, 0.95, 1)
+        on_press: app.root.change_count(root.sides, 1)
+
+
+<DiceRollerLayout>:
+    orientation: 'vertical'
+    padding: 15
+    spacing: 10
+
+    # 1. Header
+    Label:
+        text: "Welcome to Dungeon Dice!🐲"
+        font_size: '25sp'
+        size_hint_y: 0.05
+
+    # 2. Stepper Rows Stack
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: 5
+        size_hint_y: 0.45
+
+        DiceRow:
+            sides: 4
+            count: root.dice_counts[4]
+        DiceRow:
+            sides: 6
+            count: root.dice_counts[6]
+        DiceRow:
+            sides: 8
+            count: root.dice_counts[8]
+        DiceRow:
+            sides: 10
+            count: root.dice_counts[10]
+        DiceRow:
+            sides: 12
+            count: root.dice_counts[12]
+        DiceRow:
+            sides: 20
+            count: root.dice_counts[20]
+        DiceRow:
+            sides: 100
+            count: root.dice_counts[100]
+
+    # 3. Modifier Control
+    BoxLayout:
+        orientation: 'horizontal'
+        spacing: 10
+        size_hint_y: 0.1
+        Label:
+            text: "Modifier:"
+            font_size: '16sp'
+            size_hint_x: 0.3
+        RoundedButton:
+            text: "-"
+            size_hint_x: 0.2
+            btn_color: (0.2, 0.2, 0.25, 1)
+            on_press: root.change_modifier(-1)
+        Label:
+            text: str(root.modifier)
+            font_size: '18sp'
+            bold: True
+            size_hint_x: 0.3
+        RoundedButton:
+            text: "+"
+            size_hint_x: 0.2
+            btn_color: (0.1, 0.55, 0.95, 1)
+            on_press: root.change_modifier(1)
+
+    # 4. Action Buttons (ROLL & CLEAR)
+    BoxLayout:
+        orientation: 'horizontal'
+        spacing: 10
+        size_hint_y: 0.12
+        RoundedButton:
+            text: "CLEAR"
+            size_hint_x: 0.3
+            btn_color: (0.25, 0.25, 0.3, 1)
+            on_press: root.clear_all()
+        RoundedButton:
+            id: roll_btn
+            text: "ROLL DICE"
+            font_size: '20sp'
+            bold: True
+            size_hint_x: 0.7
+            btn_color: (0.05, 0.5, 0.95, 1)
+            on_press: root.do_roll()
+
+    # 5. Output Area
+    BoxLayout:
+        size_hint_y: 0.28
+        padding: 10
+        canvas.before:
+            Color:
+                rgba: (0.12, 0.14, 0.17, 1)
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+                radius: [(8, 8)]
+
+        Label:
+            text: root.result_text
+            font_size: '30sp'
+            text_size: self.width, None
+            halign: 'center'
+            valign: 'middle'
+            size_hint_y: None
+            height: self.texture_size[1]
